@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { useAppStore } from "../../../stores/AppStore";
 
-const ListContainer = styled.div<{ isOpen: boolean }>`
+const ListContainer = styled.div<{ $isOpen: boolean }>`
     /* 상태에 따라 보이거나 숨김 */
-    /* display: ${(props) => (props.isOpen ? "block" : "none")}; */
+    display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
     padding: 15px;
     overflow-y: auto;
 
@@ -160,7 +160,7 @@ const Favorites = () => {
     };
 
     return (
-        <ListContainer as='section' isOpen={isListOpen}>
+        <ListContainer as='section' $isOpen={isListOpen}>
             <ListHeader>
                 즐겨찾기
                 <ClearButton onClick={handleClearList}>비우기</ClearButton>

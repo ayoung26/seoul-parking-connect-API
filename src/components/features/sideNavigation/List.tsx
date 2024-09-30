@@ -1,9 +1,8 @@
 import styled from "styled-components";
 import { useAppStore } from "../../../stores/AppStore";
 
-const ListContainer = styled.div<{ isOpen: boolean }>`
-    display: ${(props) =>
-        props.isOpen ? "block" : "none"}; /* 상태에 따라 보이거나 숨김 */
+const ListContainer = styled.div<{ $isOpen: boolean }>`
+    display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
     padding: 15px;
     overflow-y: auto;
 
@@ -113,7 +112,7 @@ const List = ({ location }: { location: string }) => {
         },
     ];
     return (
-        <ListContainer as='section' isOpen={isListOpen}>
+        <ListContainer as='section' $isOpen={isListOpen}>
             <ListHeader>{location} 근처 주차장이에요.</ListHeader>
 
             {items.map((item) => (

@@ -2,11 +2,14 @@ import { useAppStore } from "../../stores/AppStore";
 import styled from "styled-components";
 
 const FilterContainer = styled.div`
+    position: absolute;
+    width: 100%;
     display: flex;
     gap: 0.5rem;
     padding: 15px;
     overflow-x: auto;
     white-space: nowrap;
+    z-index: 10;
 
     &::-webkit-scrollbar {
         display: none;
@@ -15,10 +18,13 @@ const FilterContainer = styled.div`
     scrollbar-width: none;
 `;
 
-const FilterButton = styled.button<{ isActive: boolean; activeColor: string }>`
-    background-color: ${({ isActive, activeColor }) =>
-        isActive ? activeColor : "#ffffff"};
-    color: ${({ isActive }) => (isActive ? "white" : "#666")};
+const FilterButton = styled.button<{
+    $isActive: boolean;
+    $activeColor: string;
+}>`
+    background-color: ${({ $isActive, $activeColor }) =>
+        $isActive ? $activeColor : "#ffffff"};
+    color: ${({ $isActive }) => ($isActive ? "white" : "#666")};
 
     font-size: 0.9rem;
     border-radius: 20px;
@@ -45,8 +51,8 @@ const FilterButtons = () => {
     return (
         <FilterContainer>
             <FilterButton
-                isActive={activeFilters.paid}
-                activeColor='#FFBC3B'
+                $isActive={activeFilters.paid}
+                $activeColor='#FFBC3B'
                 onClick={() => toggleFilter("paid")}
             >
                 <FilterIcon
@@ -60,8 +66,8 @@ const FilterButtons = () => {
                 유료
             </FilterButton>
             <FilterButton
-                isActive={activeFilters.free}
-                activeColor='#40A3FF'
+                $isActive={activeFilters.free}
+                $activeColor='#40A3FF'
                 onClick={() => toggleFilter("free")}
             >
                 <FilterIcon
@@ -75,8 +81,8 @@ const FilterButtons = () => {
                 무료
             </FilterButton>
             <FilterButton
-                isActive={activeFilters.onStreet}
-                activeColor='#22C8AA'
+                $isActive={activeFilters.onStreet}
+                $activeColor='#22C8AA'
                 onClick={() => toggleFilter("onStreet")}
             >
                 <FilterIcon
@@ -90,8 +96,8 @@ const FilterButtons = () => {
                 노상
             </FilterButton>
             <FilterButton
-                isActive={activeFilters.offStreet}
-                activeColor='#2F8B6F'
+                $isActive={activeFilters.offStreet}
+                $activeColor='#2F8B6F'
                 onClick={() => toggleFilter("offStreet")}
             >
                 <FilterIcon
@@ -105,8 +111,8 @@ const FilterButtons = () => {
                 노외
             </FilterButton>
             <FilterButton
-                isActive={activeFilters.available}
-                activeColor='#C854FF'
+                $isActive={activeFilters.available}
+                $activeColor='#C854FF'
                 onClick={() => toggleFilter("available")}
             >
                 <FilterIcon
