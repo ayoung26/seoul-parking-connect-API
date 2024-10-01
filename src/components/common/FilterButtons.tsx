@@ -8,6 +8,10 @@ const FilterContainer = styled.div`
     overflow-x: auto;
     white-space: nowrap;
 
+    @media (min-width: 1024px) {
+        padding: 25px;
+    }
+
     &::-webkit-scrollbar {
         display: none;
     }
@@ -30,6 +34,7 @@ const FilterButton = styled.button<{ isActive: boolean; activeColor: string }>`
 
     @media (min-width: 1024px) {
         padding: 10px 15px;
+        font-size: 1rem;
     }
 `;
 
