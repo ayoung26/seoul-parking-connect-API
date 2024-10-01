@@ -7,8 +7,8 @@ const StyledFavoriteButton = styled.button`
     background-color: #fff;
     border-radius: 50%;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -23,8 +23,12 @@ const StyledFavoriteButton = styled.button`
     }
 
     img {
-        width: 25px;
-        height: 25px;
+        width: 20px;
+        height: 20px;
+        @media (min-width: 1024px) {
+            width: 25px;
+            height: 25px;
+        }
     }
 `;
 

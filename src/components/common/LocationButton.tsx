@@ -14,6 +14,7 @@ const StyledLocationButton = styled.button`
     justify-content: center;
     background-color: #d5d5d5;
     cursor: pointer;
+    z-index: 10;
 
     @media (min-width: 1024px) {
         width: 45px;

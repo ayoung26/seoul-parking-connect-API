@@ -14,6 +14,7 @@ const StyledSearchButton = styled.button`
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    z-index: 10;
 
     @media (min-width: 1024px) {
         bottom: 25px;
