@@ -29,13 +29,24 @@ const InfoTitle = styled.div`
 `;
 const FavoriteButton = styled.button`
     cursor: pointer;
+    border-radius: 50%;
+    border: 1px solid #666;
+    background-color: #fff;
+    width: 30px;
+    height: 30px;
+
+    @media (min-width: 1024px) {
+        width: 40px;
+        height: 40px;
+    }
+
     img {
-        width: 25px;
-        height: 25px;
+        width: 20px;
+        height: 20px;
 
         @media (min-width: 1024px) {
-            width: 35px;
-            height: 35px;
+            width: 25px;
+            height: 25px;
         }
     }
 `;
