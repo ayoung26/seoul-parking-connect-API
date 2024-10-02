@@ -6,10 +6,10 @@
 -   컴포넌트 스타일링
 -   반응형 작업
 -   KakaoMap API 및 서울시 시영주차장 API 연동
+-   API 데이터 바인딩
 
 ### In Progress
 
--   API 데이터 바인딩
 -   메인 페이지 기능 구현
 
 ### To Do

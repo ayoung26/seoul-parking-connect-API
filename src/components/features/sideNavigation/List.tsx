@@ -5,6 +5,7 @@ const ListContainer = styled.div<{ $isOpen: boolean }>`
     display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
     padding: 15px;
     overflow-y: auto;
+    max-height: 80vh;
 
     @media (min-width: 1024px) {
         display: block; /* 웹에서는 항상 노출 */
@@ -63,68 +64,55 @@ const DetailLink = styled.a`
         font-size: 0.9rem;
     }
 `;
-const Spinner = styled.div`
-    margin: 20px auto;
-    width: 30px;
-    height: 30px;
-    border: 5px solid lightgray;
-    border-top: 5px solid #4395f6;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+// const Spinner = styled.div`
+//     margin: 20px auto;
+//     width: 30px;
+//     height: 30px;
+//     border: 5px solid lightgray;
+//     border-top: 5px solid #4395f6;
+//     border-radius: 50%;
+//     animation: spin 1s linear infinite;
 
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-`;
-const List = ({ location }: { location: string }) => {
+//     @keyframes spin {
+//         0% {
+//             transform: rotate(0deg);
+//         }
+//         100% {
+//             transform: rotate(360deg);
+//         }
+//     }
+// `;
+
+const List = () => {
     const isListOpen = useAppStore((state) => state.isListOpen);
+    const { regionInfo, parkingData } = useAppStore();
 
-    // 예시 데이터
-    const items = [
-        {
-            id: 1,
-            title: "효원빌딩주차장",
-            description: "서울 송파구 가락동 / 노상 / 기본요금 9000원",
-            link: "#",
-        },
-        {
-            id: 2,
-            title: "가락ID타워 주차장",
-            description: "서울 송파구 가락동 / 노상 / 무료 / 야간",
-            link: "#",
-        },
-        {
-            id: 3,
-            title: "효원빌딩주차장",
-            description: "서울 송파구 가락동 / 노상 / 기본요금 9000원",
-            link: "#",
-        },
-        {
-            id: 4,
-            title: "가락ID타워 주차장",
-            description: "서울 송파구 가락동 / 노상 / 무료 / 야간",
-            link: "#",
-        },
-    ];
+    // 주차장 코드 기준으로 그룹핑
+    const groupParkingData = Array.from(
+        new Map(parkingData.map((item) => [item.PKLT_CD, item])).values()
+    );
+
+    // 주차장명 ㄱㄴㄷ 순으로 정렬
+    const sortParkingData = groupParkingData.sort((a, b) => {
+        return a.PKLT_NM.localeCompare(b.PKLT_NM);
+    });
+
     return (
         <ListContainer as='section' $isOpen={isListOpen}>
-            <ListHeader>{location} 근처 주차장이에요.</ListHeader>
+            <ListHeader>{regionInfo} 근처 주차장이에요.</ListHeader>
 
-            {items.map((item) => (
-                <ListItem key={item.id}>
-                    <Title>{item.title}</Title>
-                    <Description>{item.description}</Description>
-                    <DetailLink href={item.link}>상세보기</DetailLink>
+            {sortParkingData.map((parking, idx) => (
+                <ListItem key={idx}>
+                    <Title>{parking.PKLT_NM}</Title>
+                    <Description>
+                        {parking.ADDR} / {parking.PRK_TYPE_NM} /{" "}
+                        {parking.PAY_YN_NM} / {parking.BSC_PRK_CRG}원
+                    </Description>
+                    <DetailLink href={"#"}>상세보기</DetailLink>
                 </ListItem>
             ))}
 
             {/* {isLoading && <Spinner />} */}
-            <Spinner />
         </ListContainer>
     );
 };

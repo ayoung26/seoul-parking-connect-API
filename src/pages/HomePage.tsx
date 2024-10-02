@@ -17,7 +17,7 @@ const LayoutContainer = styled.div`
 // 좌측 리스트 영역 (PC 전용)
 const LeftContainer = styled.div`
     @media (min-width: 1024px) {
-        width: 500px;
+        width: 650px;
         height: 100%;
     }
 `;
@@ -25,14 +25,12 @@ const LeftContainer = styled.div`
 // const MapContainer = styled.div``;
 
 const HomePage = () => {
-    const location = "송파구";
-
     return (
         <LayoutContainer>
             <LeftContainer>
                 <Header />
                 <SearchBar />
-                <List location={location} />
+                <List />
                 {/* <Favorites /> */}
             </LeftContainer>
 

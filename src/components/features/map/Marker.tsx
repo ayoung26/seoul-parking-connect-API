@@ -1,11 +1,13 @@
-import { CustomOverlayMap } from "react-kakao-maps-sdk";
+import { useState } from "react";
+import { CustomOverlayMap, MapMarker } from "react-kakao-maps-sdk";
 import styled from "styled-components";
+import { ParkingData } from "../../../stores/parkingDataTypes";
 
-const StyledMarker = styled.div`
+const StyledOverlay = styled.div`
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    padding: 20px;
+    padding: 25px 20px;
     font-size: 0.9rem;
     color: #666;
     max-width: 500px;
@@ -42,9 +44,11 @@ const StyledMarker = styled.div`
         font-size: 1rem;
         font-weight: bold;
         color: #4395f6;
+        /* word-wrap: break-word; */
+        white-space: normal;
 
         @media (min-width: 1024px) {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
     }
 
@@ -81,32 +85,77 @@ const StyledMarker = styled.div`
 const FavoriteButton = styled.button`
     cursor: pointer;
     img {
-        width: 25px;
-        height: 25px;
+        width: 15px;
+        height: 15px;
 
         @media (min-width: 1024px) {
-            width: 35px;
-            height: 35px;
+            width: 20px;
+            height: 20px;
         }
     }
 `;
 
-const Marker = () => {
+const Marker = ({
+    position,
+    parking,
+}: {
+    position: { lat: number; lng: number };
+    parking: ParkingData;
+}) => {
+    const [isOpen, setIsOpen] = useState(false); // 상태 추가
+
     return (
-        <CustomOverlayMap position={{ lat: 33.55635, lng: 126.795841 }}>
-            <StyledMarker>
-                <div>
-                    <h3>가락타워 주차장</h3>
-                    <FavoriteButton>
-                        <img src='/public/favoriteIcon.png' alt='즐겨찾기' />
-                    </FavoriteButton>
-                </div>
-                <p>서울 송파구 가락동</p>
-                <p>현재 주차 가능 6대</p>
-                <p>노상 / 기본요금 9000원</p>
-                <span>상세보기</span>
-            </StyledMarker>
-        </CustomOverlayMap>
+        <>
+            <MapMarker
+                position={position}
+                clickable={true} // 클릭 가능 여부
+                onClick={() => setIsOpen(!isOpen)} // 클릭 시 상태 변경
+                image={{
+                    src: "/public/markerIcon.png", // 마커 아이콘
+                    size: { width: 24, height: 35 },
+                }}
+            />
+            {isOpen && ( // isOpen이 true일 때만 CustomOverlayMap 렌더링
+                <CustomOverlayMap
+                    position={position}
+                    zIndex={100}
+                    xAnchor={0.5}
+                    yAnchor={1.25}
+                >
+                    <StyledOverlay>
+                        <img
+                            alt='close'
+                            width='10'
+                            height='10'
+                            src='/public/closeIcon.png'
+                            style={{
+                                position: "absolute",
+                                right: "10px",
+                                top: "10px",
+                                cursor: "pointer",
+                            }}
+                            onClick={() => setIsOpen(false)} // 닫기 버튼 클릭 시 오버레이 닫힘
+                        />
+                        <div>
+                            <h3>{parking.PKLT_NM}</h3>
+                            <FavoriteButton>
+                                <img
+                                    src='/public/favorite-active.png'
+                                    alt='즐겨찾기'
+                                />
+                            </FavoriteButton>
+                        </div>
+                        <p>{parking.ADDR}</p>
+                        <p>현재 주차 가능 {parking.NOW_PRK_VHCL_CNT}대</p>
+                        <p>
+                            {parking.PRK_TYPE_NM} / 기본요금{" "}
+                            {parking.BSC_PRK_CRG}원
+                        </p>
+                        <span>상세보기</span>
+                    </StyledOverlay>
+                </CustomOverlayMap>
+            )}
+        </>
     );
 };
 
