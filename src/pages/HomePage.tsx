@@ -8,21 +8,19 @@ import MapContainer from "./../components/features/map/MapContainer";
 const LayoutContainer = styled.div`
     display: flex;
     flex-direction: column;
+    height: 100vh;
 
     @media (min-width: 1024px) {
         flex-direction: row;
-        height: 100vh;
     }
 `;
-// 좌측 리스트 영역 (PC 전용)
+// 좌측 리스트 영역 (pc전용)
 const LeftContainer = styled.div`
     @media (min-width: 1024px) {
         width: 650px;
         height: 100%;
     }
 `;
-
-// const MapContainer = styled.div``;
 
 const HomePage = () => {
     return (
@@ -34,7 +32,6 @@ const HomePage = () => {
                 {/* <Favorites /> */}
             </LeftContainer>
 
-            {/* 지도 영역 */}
             <MapContainer />
         </LayoutContainer>
     );

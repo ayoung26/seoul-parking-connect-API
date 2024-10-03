@@ -12,7 +12,8 @@ import Marker from "./Marker";
 const StyledMapContainer = styled.div`
     position: relative;
     width: 100%;
-    height: calc(100vh - 118px);
+    overflow: hidden;
+    height: 100vh;
 
     background-color: lightblue;
 
@@ -22,7 +23,7 @@ const StyledMapContainer = styled.div`
 `;
 
 const MapContainer = () => {
-    const { mapCenter, parkingData } = useAppStore();
+    const { mapCenter, parkingData, mapLevel } = useAppStore();
     const { getCurrentLocation } = useMap();
 
     useEffect(() => {
@@ -36,7 +37,7 @@ const MapContainer = () => {
             <Map
                 center={mapCenter || { lat: 37.5665, lng: 126.978 }} // 기본값 (서울시청)
                 style={{ width: "100%", height: "100vh" }} // 지도의 크기 설정
-                level={5} // 확대 수준 설정
+                level={mapLevel} // 확대 수준 설정
             >
                 {parkingData.map((parking, idx) => (
                     <Marker

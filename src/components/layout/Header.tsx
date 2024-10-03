@@ -48,14 +48,9 @@ const MapIcon = styled.img`
 `;
 
 const Header = () => {
-    const toggleList = useAppStore((state) => state.toggleList);
-
+    const { isListOpen, toggleList } = useAppStore();
     const location = useLocation();
-
-    const showMapIcon =
-        location.pathname === "/search" || // 검색 페이지
-        location.pathname === "/favorites" || // 즐겨찾기 페이지
-        location.pathname === "/detail"; // 상세 페이지
+    const showMapIcon = isListOpen || location.pathname === "/detail"; // 상세 페이지
 
     return (
         <HeaderContainer>

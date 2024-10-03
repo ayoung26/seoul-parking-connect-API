@@ -13,7 +13,7 @@ const StyledFavoriteButton = styled.button`
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 1000;
+    z-index: 10;
 
     @media (min-width: 1024px) {
         width: 45px;

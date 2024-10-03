@@ -5,7 +5,13 @@ export default function useMap() {
     const { setCurrentLocation, setRegionInfo, setParkingData, setMapCenter } =
         useAppStore();
 
-    // 현재 위치로 행정구역 가져오기
+    // 자치구 기준으로 API 데이터 가져오기
+    const setParkingDataByRegion = async (regionInfo: string) => {
+        const parkingData = await getParkingData(1, 100, regionInfo);
+        return parkingData;
+    };
+
+    // 현재 위치로 자치구 가져오기
     const getCurrentLocation = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -15,7 +21,7 @@ export default function useMap() {
                     // 현재 위치 저장
                     setCurrentLocation({ lat: latitude, lng: longitude });
 
-                    // 행정구역 정보 가져오기
+                    // 자치구 정보 가져오기
                     const geocoder = new kakao.maps.services.Geocoder();
                     geocoder.coord2RegionCode(
                         longitude,
@@ -33,11 +39,8 @@ export default function useMap() {
                                 setMapCenterData(regionInfo);
 
                                 // API 데이터 가져오기
-                                const parkingData = await getParkingData(
-                                    1,
-                                    100,
-                                    regionInfo
-                                );
+                                const parkingData =
+                                    await setParkingDataByRegion(regionInfo);
                                 if (parkingData) {
                                     setParkingData(parkingData);
                                 }
@@ -75,6 +78,7 @@ export default function useMap() {
     };
 
     return {
+        setParkingDataByRegion,
         getCurrentLocation,
         setMapCenterData,
     };

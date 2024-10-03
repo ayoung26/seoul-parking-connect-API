@@ -1,14 +1,22 @@
 import styled from "styled-components";
 import { useAppStore } from "../../../stores/AppStore";
 
-const ListContainer = styled.div<{ $isOpen: boolean }>`
-    display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
+const ListContainer = styled.div<{ $isListOpen: boolean }>`
+    display: ${({ $isListOpen }) => ($isListOpen ? "block" : "none")};
+    background-color: #fff;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
     padding: 15px;
     overflow-y: auto;
-    max-height: 80vh;
+    height: calc(100vh - 108px);
 
     @media (min-width: 1024px) {
+        position: relative;
         display: block; /* 웹에서는 항상 노출 */
+        height: calc(100vh - 125px);
     }
 `;
 const ListHeader = styled.div`
@@ -28,15 +36,20 @@ const ListItem = styled.div`
     flex-direction: column;
     gap: 0.5rem;
     padding: 15px 0;
-    cursor: pointer;
 
-    &:last-child {
-        border-bottom: none;
+    @media (max-width: 1024px) {
+        pointer-events: none; /* 모바일에서는 클릭 비활성화 */
     }
 
     @media (min-width: 1024px) {
         gap: 0.8rem;
         padding: 20px 0;
+        cursor: pointer;
+        pointer-events: auto; /* 데스크탑에서 클릭 활성화 */
+    }
+
+    &:last-child {
+        border-bottom: none;
     }
 `;
 const Title = styled.h2`
@@ -59,6 +72,7 @@ const Description = styled.p`
 const DetailLink = styled.a`
     font-size: 0.7rem;
     color: #4395f6;
+    pointer-events: auto;
 
     @media (min-width: 1024px) {
         font-size: 0.9rem;
@@ -85,7 +99,8 @@ const DetailLink = styled.a`
 
 const List = () => {
     const isListOpen = useAppStore((state) => state.isListOpen);
-    const { regionInfo, parkingData } = useAppStore();
+    const { regionInfo, parkingData, setMapCenter, setMapLevel } =
+        useAppStore();
 
     // 주차장 코드 기준으로 그룹핑
     const groupParkingData = Array.from(
@@ -97,12 +112,22 @@ const List = () => {
         return a.PKLT_NM.localeCompare(b.PKLT_NM);
     });
 
+    // 리스트 항목 클릭 시 지도 포커싱
+    const handleListClick = (lat: number, lng: number) => {
+        setMapCenter({ lat, lng });
+        const markerZoomLevel = useAppStore.getState().markerZoomLevel;
+        setMapLevel(markerZoomLevel);
+    };
+
     return (
-        <ListContainer as='section' $isOpen={isListOpen}>
+        <ListContainer as='section' $isListOpen={isListOpen}>
             <ListHeader>{regionInfo} 근처 주차장이에요.</ListHeader>
 
             {sortParkingData.map((parking, idx) => (
-                <ListItem key={idx}>
+                <ListItem
+                    key={idx}
+                    onClick={() => handleListClick(parking.LAT, parking.LOT)}
+                >
                     <Title>{parking.PKLT_NM}</Title>
                     <Description>
                         {parking.ADDR} / {parking.PRK_TYPE_NM} /{" "}
