@@ -59,7 +59,7 @@ const ErrorMessage = styled.p`
 const SearchBar = () => {
     const [searchTerm, setSearchTerm] = useState(""); // 검색어
     const [errorMessage, setErrorMessage] = useState(""); // 에러메세지
-    const { setParkingDataByRegion, setMapCenterData } = useMap();
+    const { setParkingDataByRegion, setMapCenterRegion } = useMap();
     const { setParkingData, setRegionInfo, setIsListOpen, setMapLevel } =
         useAppStore();
 
@@ -77,7 +77,7 @@ const SearchBar = () => {
                 setErrorMessage("");
 
                 // 지도 정보
-                setMapCenterData(searchTerm);
+                setMapCenterRegion(searchTerm);
                 setRegionInfo(searchTerm);
 
                 // 지도 확대 초기화

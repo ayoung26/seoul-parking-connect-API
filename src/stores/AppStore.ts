@@ -11,7 +11,6 @@ interface AppState {
     activeFilters: Record<FilterKey, boolean>; // 필터 상태 (유료, 무료 등)
     toggleFilter: (filter: FilterKey) => void; // 필터 토글 함수
 
-    // TODO 미사용하면 REMOVE
     currentLocation: { lat: number; lng: number } | null; // 현재 위치 상태
     setCurrentLocation: (location: { lat: number; lng: number }) => void; // 현재 위치 설정 함수
 
