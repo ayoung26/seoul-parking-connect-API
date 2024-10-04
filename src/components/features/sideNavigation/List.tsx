@@ -98,13 +98,19 @@ const DetailLink = styled.a`
 // `;
 
 const List = () => {
-    const isListOpen = useAppStore((state) => state.isListOpen);
-    const { regionInfo, parkingData, setMapCenter, setMapLevel } =
-        useAppStore();
+    const {
+        isListOpen,
+        regionInfo,
+        filteredParkingData,
+        setMapCenter,
+        setMapLevel,
+    } = useAppStore();
 
     // 주차장 코드 기준으로 그룹핑
     const groupParkingData = Array.from(
-        new Map(parkingData.map((item) => [item.PKLT_CD, item])).values()
+        new Map(
+            filteredParkingData.map((item) => [item.PKLT_CD, item])
+        ).values()
     );
 
     // 주차장명 ㄱㄴㄷ 순으로 정렬

@@ -27,6 +27,9 @@ interface AppState {
 
     parkingData: ParkingData[]; // 주차장 데이터 상태
     setParkingData: (data: ParkingData[]) => void; // 주차장 데이터 설정 함수
+
+    filteredParkingData: ParkingData[]; // 필터링된 주차장 데이터 상태
+    setFilteredParkingData: (data: ParkingData[]) => void; // 필터링된 주차장 데이터 설정 함수
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -84,4 +87,9 @@ export const useAppStore = create<AppState>((set) => ({
     parkingData: [],
     // 주차장 데이터 설정 함수
     setParkingData: (data: ParkingData[]) => set({ parkingData: data }),
+
+    // 필터링된 주차장 데이터 상태
+    filteredParkingData: [],
+    // 필터링된 주차장 데이터 설정 함수
+    setFilteredParkingData: (data) => set({ filteredParkingData: data }),
 }));

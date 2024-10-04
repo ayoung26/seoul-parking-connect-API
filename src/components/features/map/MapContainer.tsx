@@ -6,7 +6,7 @@ import CurrentMoveButton from "../../common/CurrentMoveButton";
 import FavoriteButton from "../../common/FavoriteButton";
 import { useAppStore } from "../../../stores/AppStore";
 import useMap from "../../../hooks/useMap";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import Marker from "./Marker";
 
 const StyledMapContainer = styled.div`
@@ -21,8 +21,15 @@ const StyledMapContainer = styled.div`
 `;
 
 const MapContainer = () => {
-    const { mapCenter, parkingData, mapLevel, setMapCenter, activeFilters } =
-        useAppStore();
+    const {
+        mapCenter,
+        parkingData,
+        mapLevel,
+        setMapCenter,
+        activeFilters,
+        filteredParkingData,
+        setFilteredParkingData,
+    } = useAppStore();
     const { showParkingDataByLocation } = useMap();
 
     useEffect(() => {
@@ -30,30 +37,30 @@ const MapContainer = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // 필터링된 주차장 데이터 메모이제이션
-    const filteredParkingData = useMemo(() => {
-        return parkingData.filter((parking) => {
-            const filterConditions = [];
+    // 필터링된 데이터 저장
+    useEffect(() => {
+        const filteredData = parkingData.filter((parking) => {
+            const conditions = [
+                // 유료/무료 필터
+                activeFilters.paid || activeFilters.free
+                    ? (activeFilters.paid && parking.PAY_YN === "Y") ||
+                      (activeFilters.free && parking.PAY_YN === "N")
+                    : true,
+                // 노상/노외 필터
+                activeFilters.onStreet || activeFilters.offStreet
+                    ? (activeFilters.onStreet &&
+                          parking.PRK_TYPE_NM.includes("노상")) ||
+                      (activeFilters.offStreet &&
+                          parking.PRK_TYPE_NM.includes("노외"))
+                    : true,
+                // 주차 가능 필터
+                activeFilters.available ? parking.NOW_PRK_VHCL_CNT > 0 : true,
+            ];
 
-            if (activeFilters.paid) {
-                filterConditions.push(parking.PAY_YN === "Y");
-            }
-            if (activeFilters.free) {
-                filterConditions.push(parking.PAY_YN === "N");
-            }
-            if (activeFilters.onStreet) {
-                filterConditions.push(parking.PRK_TYPE_NM.includes("노상"));
-            }
-            if (activeFilters.offStreet) {
-                filterConditions.push(parking.PRK_TYPE_NM.includes("노외"));
-            }
-            if (activeFilters.available) {
-                filterConditions.push(parking.NOW_PRK_VHCL_CNT > 0);
-            }
-
-            return filterConditions.every((filteringData) => filteringData);
+            return conditions.every(Boolean);
         });
-    }, [parkingData, activeFilters]);
+        setFilteredParkingData(filteredData);
+    }, [parkingData, activeFilters, setFilteredParkingData]);
 
     // 현 위치 이동을 위해 지도 중심 좌표를 저장
     const updateMapCenter = (map: kakao.maps.Map) => {
