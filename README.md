@@ -7,11 +7,8 @@
 -   반응형 작업
 -   KakaoMap API 및 서울시 시영주차장 API 연동
 -   API 데이터 바인딩
-
-### In Progress
-
 -   메인 페이지 기능 구현
 
-### To Do
+### In Progress
 
 -   상세 페이지 데이터 바인딩
