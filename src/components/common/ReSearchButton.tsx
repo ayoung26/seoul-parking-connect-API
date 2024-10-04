@@ -1,6 +1,8 @@
 import styled from "styled-components";
+import useMap from "./../../hooks/useMap";
+import { useAppStore } from "../../stores/AppStore";
 
-const StyledSearchButton = styled.button`
+const StyledReSearchButton = styled.button`
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -35,13 +37,21 @@ const StyledSearchButton = styled.button`
     }
 `;
 
-const SearchButton = () => {
+const ReSearchButton = () => {
+    const mapCenter = useAppStore((state) => state.mapCenter);
+    const { fetchRegionAndParkingData } = useMap();
+
+    const handleReSearch = async () => {
+        if (mapCenter)
+            await fetchRegionAndParkingData(mapCenter.lat, mapCenter.lng);
+    };
+
     return (
-        <StyledSearchButton>
+        <StyledReSearchButton onClick={handleReSearch}>
             <img src='/public/refrechIcon.png' alt='지도 검색' />
             <span>현 지도에서 검색</span>
-        </StyledSearchButton>
+        </StyledReSearchButton>
     );
 };
 
-export default SearchButton;
+export default ReSearchButton;

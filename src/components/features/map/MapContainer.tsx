@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Map } from "react-kakao-maps-sdk";
 import FilterButtons from "../../common/FilterButtons";
-import SearchButton from "../../common/SearchButton";
+import ReSearchButton from "../../common/ReSearchButton";
 import CurrentMoveButton from "../../common/CurrentMoveButton";
 import FavoriteButton from "../../common/FavoriteButton";
 import { useAppStore } from "../../../stores/AppStore";
@@ -57,7 +57,7 @@ const MapContainer = () => {
             </Map>
             <FavoriteButton />
             <CurrentMoveButton />
-            <SearchButton />
+            <ReSearchButton />
         </StyledMapContainer>
     );
 };

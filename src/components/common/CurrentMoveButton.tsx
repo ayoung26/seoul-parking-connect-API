@@ -27,21 +27,12 @@ const StyledCurrentMoveButton = styled.button`
 `;
 
 const CurrentMoveButton = () => {
-    const { setMapCenter, currentLocation } = useAppStore();
+    const { setMapCenter } = useAppStore();
     const { getCurrentLocation } = useMap();
-    const handleCurrentMove = () => {
-        if (!currentLocation) {
-            // 현재 위치 가져오기
-            getCurrentLocation();
-        } else {
-            // 지도 중심을 현재 위치로 설정
-            setMapCenter(currentLocation);
-
-            const bounds = new kakao.maps.LatLngBounds();
-            bounds.extend(
-                new kakao.maps.LatLng(currentLocation.lat, currentLocation.lng)
-            );
-        }
+    const handleCurrentMove = async () => {
+        const currentLocation = await getCurrentLocation();
+        // 지도 중심을 현재 위치로 설정
+        setMapCenter(currentLocation);
     };
 
     return (

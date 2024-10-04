@@ -12,37 +12,75 @@ export default function useMap() {
     };
 
     // 현재 위치 가져오기
-    const getCurrentLocation = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    // 현재 위치 저장
-                    setCurrentLocation({
-                        lat: Number(latitude),
-                        lng: Number(longitude),
-                    });
-                },
-                (error) => {
-                    console.error("현재 위치를 가져오는 중 오류 발생:", error);
-                }
-            );
-        } else {
-            console.error("현재 위치를 받아올 수 없습니다.");
-        }
-    };
-
-    // 좌표로 자치구 정보 가져오기
-    const getRegionInfo = (lat: number, lng: number) => {
-        const geocoder = new kakao.maps.services.Geocoder();
-        geocoder.coord2RegionCode(lng, lat, (result, status) => {
-            if (status === kakao.maps.services.Status.OK && result.length > 0) {
-                const regionInfo = result[0]!.region_2depth_name;
-                setRegionInfo(regionInfo);
+    const getCurrentLocation = (): Promise<{ lat: number; lng: number }> => {
+        return new Promise((resolve, reject) => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        setCurrentLocation({
+                            lat: Number(latitude),
+                            lng: Number(longitude),
+                        });
+                        resolve({ lat: latitude, lng: longitude });
+                    },
+                    (error) => {
+                        console.error(
+                            "현재 위치를 가져오는 중 오류 발생:",
+                            error
+                        );
+                        reject(error);
+                    }
+                );
             } else {
-                console.error("자치구 정보를 가져오는 중 오류 발생");
+                reject(new Error("현재 위치를 받아올 수 없습니다."));
             }
         });
+    };
+
+    // 좌표로 자치구 정보 얻고 주차장 데이터 가져오기
+    interface RegionCodeResult {
+        region_1depth_name: string; // 시/도 이름
+        region_2depth_name: string; // 구 이름
+        region_3depth_name?: string; // 동 이름
+        code: string; // 행정 코드
+    }
+    const fetchRegionAndParkingData = async (lat: number, lng: number) => {
+        const geocoder = new kakao.maps.services.Geocoder();
+
+        try {
+            // 자치구 정보 가져오기
+            const result = await new Promise<RegionCodeResult[]>(
+                (resolve, reject) => {
+                    geocoder.coord2RegionCode(lng, lat, (result, status) => {
+                        if (
+                            status === kakao.maps.services.Status.OK &&
+                            result.length > 0
+                        ) {
+                            resolve(result);
+                        } else {
+                            reject(
+                                new Error("geocoder.coord2RegionCode Error")
+                            );
+                        }
+                    });
+                }
+            );
+
+            const regionInfo = result[0]!.region_2depth_name;
+            setRegionInfo(regionInfo);
+
+            // 중심지 설정
+            setMapCenterRegion(regionInfo);
+
+            // API 데이터 가져오기
+            const parkingData = await setParkingDataByRegion(regionInfo);
+            if (parkingData) {
+                setParkingData(parkingData);
+            }
+        } catch (error) {
+            console.error("주차장 데이터 가져오는 중 오류 발생:", error);
+        }
     };
 
     // 자치구 중심 위치로 지도 중심 설정하는 함수
@@ -61,61 +99,20 @@ export default function useMap() {
         });
     };
 
-    // TODO 중복코드 개선
     // 현재 위치한 자치구 내 주차장 정보 표시
     const showParkingDataByLocation = async () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                    const { latitude, longitude } = position.coords;
-
-                    // 현재 위치 저장
-                    setCurrentLocation({ lat: latitude, lng: longitude });
-
-                    // 자치구 정보 가져오기
-                    const geocoder = new kakao.maps.services.Geocoder();
-                    geocoder.coord2RegionCode(
-                        longitude,
-                        latitude,
-                        async (result, status) => {
-                            if (
-                                status === kakao.maps.services.Status.OK &&
-                                result.length > 0
-                            ) {
-                                const regionInfo =
-                                    result[0]!.region_2depth_name;
-                                setRegionInfo(regionInfo);
-
-                                // 중심지 설정
-                                setMapCenterRegion(regionInfo);
-
-                                // API 데이터 가져오기
-                                const parkingData =
-                                    await setParkingDataByRegion(regionInfo);
-                                if (parkingData) {
-                                    setParkingData(parkingData);
-                                }
-                            } else {
-                                console.error(
-                                    "행정구역 정보를 가져오는 중 오류 발생"
-                                );
-                            }
-                        }
-                    );
-                },
-                (error) => {
-                    console.error("현재 위치를 가져오는 중 오류 발생:", error);
-                }
-            );
-        } else {
-            console.error("현재 위치를 받아올 수 없습니다.");
+        try {
+            const { lat, lng } = await getCurrentLocation();
+            await fetchRegionAndParkingData(lat, lng);
+        } catch (error) {
+            console.error("주차장 데이터를 가져오는 중 오류 발생:", error);
         }
     };
 
     return {
         setParkingDataByRegion,
         getCurrentLocation,
-        getRegionInfo,
+        fetchRegionAndParkingData,
         setMapCenterRegion,
         showParkingDataByLocation,
     };
