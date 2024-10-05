@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { useAppStore } from "../../stores/AppStore";
 
 const HeaderContainer = styled.header`
@@ -123,7 +123,9 @@ const Header = () => {
     return (
         <HeaderContainer>
             <LogoWrap>
-                <Logo src='/public/logo.png' alt='Logo' />
+                <Link to={`/`}>
+                    <Logo src='/public/logo.png' alt='Logo' />
+                </Link>
                 <Title>주차자리요</Title>
             </LogoWrap>
 

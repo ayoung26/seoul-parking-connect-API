@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { CustomOverlayMap, MapMarker } from "react-kakao-maps-sdk";
 import styled from "styled-components";
 import { ParkingData } from "../../../stores/parkingDataTypes";
@@ -132,7 +133,8 @@ const Marker = ({
                 onClick={() => setIsOpen(!isOpen)} // 클릭 시 상태 변경
                 image={{
                     src: "/public/markerIcon.png", // 마커 아이콘
-                    size: { width: 24, height: 35 },
+
+                    size: { width: 30, height: 38 },
                 }}
             />
             {isOpen && ( // isOpen이 true일 때만 CustomOverlayMap 렌더링
@@ -173,9 +175,11 @@ const Marker = ({
                         <p>현재 주차 가능 {parking.NOW_PRK_VHCL_CNT}대</p>
                         <p>
                             {parking.PRK_TYPE_NM} / 기본요금{" "}
-                            {parking.BSC_PRK_CRG}원
+                            {parking.BSC_PRK_CRG.toLocaleString()}원
                         </p>
-                        <span>상세보기</span>
+                        <Link to={`/detail/${parking.PKLT_CD}`}>
+                            <span>상세보기</span>
+                        </Link>
                     </StyledOverlay>
                 </CustomOverlayMap>
             )}

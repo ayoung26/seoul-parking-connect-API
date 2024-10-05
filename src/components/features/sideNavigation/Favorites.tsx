@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import { useAppStore } from "../../../stores/AppStore";
 
 const ListContainer = styled.div<{ $isOpen: boolean }>`
@@ -94,7 +95,7 @@ const Description = styled.p`
         font-size: 1rem;
     }
 `;
-const DetailLink = styled.a`
+const DetailLink = styled.span`
     font-size: 0.7rem;
     color: #4395f6;
 
@@ -164,7 +165,9 @@ const Favorites = () => {
                             {parking.PAY_YN_NM} /{" "}
                             {parking.BSC_PRK_CRG.toLocaleString()}원
                         </Description>
-                        <DetailLink href={""}>상세보기</DetailLink>
+                        <Link to={`/detail/${parking.PKLT_CD}`}>
+                            <DetailLink>상세보기</DetailLink>
+                        </Link>
                     </ListItemContent>
                     <RemoveButton
                         src='/public/closeIcon.png'

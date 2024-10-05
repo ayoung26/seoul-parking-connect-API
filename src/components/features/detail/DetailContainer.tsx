@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { ParkingData } from "../../../stores/parkingDataTypes";
+import { useAppStore } from "../../../stores/AppStore";
 
 const InfoContainer = styled.div`
     padding: 15px;
@@ -30,7 +32,6 @@ const InfoTitle = styled.div`
 const FavoriteButton = styled.button`
     cursor: pointer;
     border-radius: 50%;
-    border: 1px solid #666;
     background-color: #fff;
     width: 30px;
     height: 30px;
@@ -137,70 +138,134 @@ const TimeRow = styled.div`
     }
 `;
 
-const DetailContainer = () => {
+const DetailContainer = ({ parking }: { parking: ParkingData }) => {
+    const {
+        favoritesParkingData,
+        addFavoritesParkingData,
+        removeFavoritesParkingData,
+    } = useAppStore();
+
+    // 즐겨찾기 여부 확인
+    const isFavorite = favoritesParkingData.some(
+        (item) => item.PKLT_CD === parking.PKLT_CD
+    );
+
+    // 즐겨찾기 버튼 클릭 핸들러
+    const handleFavoriteClick = () => {
+        if (isFavorite) {
+            removeFavoritesParkingData(parking.PKLT_CD); // 즐겨찾기 해제
+        } else {
+            addFavoritesParkingData(parking); // 즐겨찾기 추가
+        }
+    };
+
+    // 시간 형식 변경
+    const formatTime = (time: string) => {
+        const timeString = time.padStart(4, "0");
+        const hours = timeString.slice(0, 2);
+        const minutes = timeString.slice(2, 4);
+
+        return `${hours}:${minutes}`;
+    };
+    // 정기권 빈값 변경
+    const formattedPRD_AMT = parking.PRD_AMT
+        ? Number(parking.PRD_AMT).toLocaleString()
+        : "0";
+
     return (
         <InfoContainer>
             <InfoTitle>
-                <h2>가락ID타워 주차장</h2>
-                <FavoriteButton>
-                    <img src='/public/favorite-active.png' alt='즐겨찾기' />
+                <h2>{parking.PKLT_NM}</h2>
+                <FavoriteButton onClick={handleFavoriteClick}>
+                    <img
+                        src={
+                            isFavorite
+                                ? "/public/favorite-active.png"
+                                : "/public/favorite-non-active.png"
+                        }
+                        alt='즐겨찾기'
+                    />
                 </FavoriteButton>
             </InfoTitle>
             <UpdateInfo>
-                정보 업데이트 <span>2024-09-12 11:01</span>
+                정보 업데이트 <span>{parking.NOW_PRK_VHCL_UPDT_TM}</span>
             </UpdateInfo>
 
             {/* 주차장 상세 정보 */}
             <InfoSection>
                 <InfoRow>
                     <InfoLabel>종류</InfoLabel>
-                    <InfoValue>노상</InfoValue>
+                    <InfoValue>{parking.PRK_TYPE_NM}</InfoValue>
                 </InfoRow>
                 <InfoRow>
                     <InfoLabel>주소</InfoLabel>
-                    <InfoValue>서울 송파구 중대로 105</InfoValue>
+                    <InfoValue>{parking.ADDR}</InfoValue>
                 </InfoRow>
                 <InfoRow>
                     <InfoLabel>전화번호</InfoLabel>
-                    <InfoValue>02-123-1234</InfoValue>
+                    <InfoValue>{parking.TELNO}</InfoValue>
                 </InfoRow>
                 <InfoRow>
                     <InfoLabel>요금 정보</InfoLabel>
-                    <InfoValue>유료</InfoValue>
+                    <InfoValue>{parking.PAY_YN_NM}</InfoValue>
                 </InfoRow>
-                <FeeTable>
-                    <FeeRow>
-                        <span>기본 금액</span>
-                        <InfoValue>30,000원</InfoValue>
-                    </FeeRow>
-                    <FeeRow>
-                        <span>추가 금액</span>
-                        <InfoValue>30,000원</InfoValue>
-                    </FeeRow>
-                    <FeeRow>
-                        <span>일 최대 금액</span>
-                        <InfoValue>30,000원</InfoValue>
-                    </FeeRow>
-                </FeeTable>
-                <FreeNotice>* 토요일 무료 / 공휴일 무료</FreeNotice>
+                {/* 유료인 경우에만 FeeTable 노출 */}
+                {parking.PAY_YN === "Y" && (
+                    <FeeTable>
+                        <FeeRow>
+                            <span>기본 금액</span>
+                            <InfoValue>
+                                {parking.BSC_PRK_CRG.toLocaleString()}원
+                            </InfoValue>
+                        </FeeRow>
+                        <FeeRow>
+                            <span>추가 금액</span>
+                            <InfoValue>
+                                {parking.ADD_PRK_CRG.toLocaleString()}원
+                            </InfoValue>
+                        </FeeRow>
+                        <FeeRow>
+                            <span>일 최대 금액</span>
+                            <InfoValue>
+                                {parking.DAY_MAX_CRG.toLocaleString()}원
+                            </InfoValue>
+                        </FeeRow>
+                    </FeeTable>
+                )}
+                {(parking.SAT_CHGD_FREE_NM === "무료" ||
+                    parking.LHLDY_CHGD_FREE_SE_NAME === "무료") && (
+                    <FreeNotice>
+                        * 토요일 {parking.SAT_CHGD_FREE_NM} / 공휴일{" "}
+                        {parking.LHLDY_CHGD_FREE_SE_NAME}
+                    </FreeNotice>
+                )}
                 <InfoRow>
                     <InfoLabel>정기권 금액</InfoLabel>
-                    <InfoValue>98,000원</InfoValue>
+                    <InfoValue>{formattedPRD_AMT}원</InfoValue>
                 </InfoRow>
 
                 <InfoLabel>운영 시간</InfoLabel>
                 <TimeSection>
                     <TimeRow>
                         <span>평일</span>
-                        <InfoValue>05:00~23:00</InfoValue>
+                        <InfoValue>
+                            {formatTime(parking.WD_OPER_BGNG_TM)} ~{" "}
+                            {formatTime(parking.WD_OPER_END_TM)}
+                        </InfoValue>
                     </TimeRow>
                     <TimeRow>
-                        <span>토요일</span>
-                        <InfoValue>05:00~23:00</InfoValue>
+                        <span>주말</span>
+                        <InfoValue>
+                            {formatTime(parking.WE_OPER_BGNG_TM)} ~{" "}
+                            {formatTime(parking.WE_OPER_END_TM)}
+                        </InfoValue>
                     </TimeRow>
                     <TimeRow>
-                        <span>일요일/공휴일</span>
-                        <InfoValue>05:00~23:00</InfoValue>
+                        <span>공휴일</span>
+                        <InfoValue>
+                            {formatTime(parking.LHLDY_OPER_BGNG_TM)} ~{" "}
+                            {formatTime(parking.LHLDY_OPER_END_TM)}
+                        </InfoValue>
                     </TimeRow>
                 </TimeSection>
             </InfoSection>
