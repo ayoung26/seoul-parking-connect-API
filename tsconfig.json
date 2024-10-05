@@ -10,7 +10,7 @@
         // 'ES3'(기본값), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', 또는 'ESNEXT' 중 선택할 수 있습니다.
         // ES2016 사용
 
-        "module": "ES2015",
+        "module": "ES2020",
         // 모듈 코드 생성 방식을 지정합니다.
         // 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', 또는 'ESNext' 중 선택할 수 있습니다.
         // commonjs 사용
@@ -59,8 +59,8 @@
         "skipLibCheck": true,
         // 정의 파일의 타입 확인을 건너 뛸 지 여부
 
-        "types": ["kakao.maps.d.ts"],
-        // Kakao Maps 타입 정의 파일
+        "types": ["kakao.maps.d.ts", "node"],
+        // Kakao Maps 타입 정의 파일, node 타입 정의
 
         "resolveJsonModule": true
         // JSON 파일 모듈로 인식하기 위해서 추가

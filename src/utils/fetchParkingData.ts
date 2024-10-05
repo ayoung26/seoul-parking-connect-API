@@ -1,5 +1,3 @@
-import { API_BASE_URL, API_KEY } from "../constants/apiConstants";
-
 export const fetchParkingData = async (
     startIdx: number,
     endIdx: number,
@@ -9,7 +7,14 @@ export const fetchParkingData = async (
         // (선택) 자치구명 검색
         const addrParam = addr ? `/${encodeURIComponent(addr)}` : "";
 
-        const requestUrl = `${API_BASE_URL}/${API_KEY}/json/GetParkingInfo/${startIdx}/${endIdx}${addrParam}`;
+        const apiUrl = import.meta.env.VITE_API_BASE_URL;
+        const apiKey = import.meta.env.VITE_API_KEY;
+
+        if (!apiUrl || !apiKey) {
+            throw new Error("API URL 또는 API KEY가 설정되지 않았습니다.");
+        }
+
+        const requestUrl = `${apiUrl}/${apiKey}/json/GetParkingInfo/${startIdx}/${endIdx}${addrParam}`;
 
         const response = await fetch(requestUrl);
 
