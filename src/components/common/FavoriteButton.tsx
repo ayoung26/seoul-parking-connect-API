@@ -40,7 +40,7 @@ const FavoriteButton = () => {
 
     return (
         <StyledFavoriteButton onClick={handleButton}>
-            <img src='/public/favorite-active.png' alt='즐겨찾기' />
+            <img src='/favorite-active.png' alt='즐겨찾기' />
         </StyledFavoriteButton>
     );
 };

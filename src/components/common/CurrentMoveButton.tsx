@@ -37,7 +37,7 @@ const CurrentMoveButton = () => {
 
     return (
         <StyledCurrentMoveButton onClick={handleCurrentMove}>
-            <img src='/public/locationIcon.png' alt='현위치로 이동' />
+            <img src='/locationIcon.png' alt='현위치로 이동' />
         </StyledCurrentMoveButton>
     );
 };

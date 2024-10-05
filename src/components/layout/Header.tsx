@@ -124,7 +124,7 @@ const Header = () => {
         <HeaderContainer>
             <LogoWrap>
                 <Link to={`/`}>
-                    <Logo src='/public/logo.png' alt='Logo' />
+                    <Logo src='/logo.png' alt='Logo' />
                 </Link>
                 <Title>주차자리요</Title>
             </LogoWrap>
@@ -134,8 +134,8 @@ const Header = () => {
                     <img
                         src={
                             isListView
-                                ? "/public/favorite-active.png" // 리스트가 열려 있으면 즐겨찾기 아이콘
-                                : "/public/listIcon.png" // 즐겨찾기가 열려 있으면 리스트 아이콘
+                                ? "/favorite-active.png" // 리스트가 열려 있으면 즐겨찾기 아이콘
+                                : "/listIcon.png" // 즐겨찾기가 열려 있으면 리스트 아이콘
                         }
                     />
                     <span>{isListView ? "즐겨찾기" : "리스트"}</span>
@@ -144,7 +144,7 @@ const Header = () => {
 
             {showMapIcon && (
                 <MapIcon
-                    src='/public/mapIcon.png'
+                    src='/mapIcon.png'
                     alt='mapIcon'
                     onClick={handleMapIconClick}
                 />

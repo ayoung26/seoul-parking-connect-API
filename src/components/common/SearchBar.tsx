@@ -99,7 +99,7 @@ const SearchBar = () => {
     return (
         <>
             <SearchContainer>
-                <SearchIcon src='/public/searchIcon.png' alt='Search Icon' />
+                <SearchIcon src='/searchIcon.png' alt='Search Icon' />
                 <SearchInput
                     placeholder='자치구를 입력해주세요 (예) 강남구, 도봉구'
                     value={searchTerm}

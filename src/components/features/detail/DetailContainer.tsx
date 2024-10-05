@@ -180,8 +180,8 @@ const DetailContainer = ({ parking }: { parking: ParkingData }) => {
                     <img
                         src={
                             isFavorite
-                                ? "/public/favorite-active.png"
-                                : "/public/favorite-non-active.png"
+                                ? "/favorite-active.png"
+                                : "/favorite-non-active.png"
                         }
                         alt='즐겨찾기'
                     />

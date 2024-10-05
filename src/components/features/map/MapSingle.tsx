@@ -21,7 +21,7 @@ const MapSingle = ({ lat, lng }: { lat: number; lng: number }) => {
                     position={{ lat, lng }}
                     clickable={true} // 클릭 가능 여부
                     image={{
-                        src: "/public/markerIcon.png", // 마커 아이콘
+                        src: "/markerIcon.png", // 마커 아이콘
                         size: { width: 30, height: 38 },
                     }}
                 />

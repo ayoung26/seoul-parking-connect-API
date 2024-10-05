@@ -132,7 +132,7 @@ const Marker = ({
                 clickable={true} // 클릭 가능 여부
                 onClick={() => setIsOpen(!isOpen)} // 클릭 시 상태 변경
                 image={{
-                    src: "/public/markerIcon.png", // 마커 아이콘
+                    src: "/markerIcon.png", // 마커 아이콘
 
                     size: { width: 30, height: 38 },
                 }}
@@ -149,7 +149,7 @@ const Marker = ({
                             alt='close'
                             width='10'
                             height='10'
-                            src='/public/closeIcon.png'
+                            src='/closeIcon.png'
                             style={{
                                 position: "absolute",
                                 right: "10px",
@@ -164,8 +164,8 @@ const Marker = ({
                                 <img
                                     src={
                                         isFavorite
-                                            ? "/public/favorite-active.png"
-                                            : "/public/favorite-non-active.png"
+                                            ? "/favorite-active.png"
+                                            : "/favorite-non-active.png"
                                     }
                                     alt='즐겨찾기'
                                 />

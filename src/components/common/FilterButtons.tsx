@@ -63,8 +63,8 @@ const FilterButtons = () => {
                 <FilterIcon
                     src={
                         activeFilters.paid
-                            ? "/public/filterIcon/filterIcon1-white.png"
-                            : "/public/filterIcon/filterIcon1.png"
+                            ? "/filterIcon/filterIcon1-white.png"
+                            : "/filterIcon/filterIcon1.png"
                     }
                     alt='filter Icon'
                 />
@@ -78,8 +78,8 @@ const FilterButtons = () => {
                 <FilterIcon
                     src={
                         activeFilters.free
-                            ? "/public/filterIcon/filterIcon1-white.png"
-                            : "/public/filterIcon/filterIcon2.png"
+                            ? "/filterIcon/filterIcon1-white.png"
+                            : "/filterIcon/filterIcon2.png"
                     }
                     alt='filter Icon'
                 />
@@ -93,8 +93,8 @@ const FilterButtons = () => {
                 <FilterIcon
                     src={
                         activeFilters.onStreet
-                            ? "/public/filterIcon/filterIcon3-white.png"
-                            : "/public/filterIcon/filterIcon3.png"
+                            ? "/filterIcon/filterIcon3-white.png"
+                            : "/filterIcon/filterIcon3.png"
                     }
                     alt='filter Icon'
                 />
@@ -108,8 +108,8 @@ const FilterButtons = () => {
                 <FilterIcon
                     src={
                         activeFilters.offStreet
-                            ? "/public/filterIcon/filterIcon4-white.png"
-                            : "/public/filterIcon/filterIcon4.png"
+                            ? "/filterIcon/filterIcon4-white.png"
+                            : "/filterIcon/filterIcon4.png"
                     }
                     alt='filter Icon'
                 />
@@ -123,8 +123,8 @@ const FilterButtons = () => {
                 <FilterIcon
                     src={
                         activeFilters.available
-                            ? "/public/filterIcon/filterIcon5-white.png"
-                            : "/public/filterIcon/filterIcon5.png"
+                            ? "/filterIcon/filterIcon5-white.png"
+                            : "/filterIcon/filterIcon5.png"
                     }
                     alt='filter Icon'
                 />

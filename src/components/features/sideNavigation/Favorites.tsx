@@ -170,7 +170,7 @@ const Favorites = () => {
                         </Link>
                     </ListItemContent>
                     <RemoveButton
-                        src='/public/closeIcon.png'
+                        src='/closeIcon.png'
                         onClick={() =>
                             removeFavoritesParkingData(parking.PKLT_CD)
                         }

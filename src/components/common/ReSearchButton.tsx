@@ -48,7 +48,7 @@ const ReSearchButton = () => {
 
     return (
         <StyledReSearchButton onClick={handleReSearch}>
-            <img src='/public/refrechIcon.png' alt='지도 검색' />
+            <img src='/refrechIcon.png' alt='지도 검색' />
             <span>현 지도에서 검색</span>
         </StyledReSearchButton>
     );
