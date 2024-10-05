@@ -2,6 +2,7 @@ import { useState } from "react";
 import { CustomOverlayMap, MapMarker } from "react-kakao-maps-sdk";
 import styled from "styled-components";
 import { ParkingData } from "../../../stores/parkingDataTypes";
+import { useAppStore } from "../../../stores/AppStore";
 
 const StyledOverlay = styled.div`
     background-color: #fff;
@@ -102,7 +103,26 @@ const Marker = ({
     position: { lat: number; lng: number };
     parking: ParkingData;
 }) => {
-    const [isOpen, setIsOpen] = useState(false); // 상태 추가
+    const [isOpen, setIsOpen] = useState(false); // 오버레이 열림/닫힘 상태
+    const {
+        favoritesParkingData,
+        addFavoritesParkingData,
+        removeFavoritesParkingData,
+    } = useAppStore();
+
+    // 즐겨찾기 여부 확인
+    const isFavorite = favoritesParkingData.some(
+        (item) => item.PKLT_CD === parking.PKLT_CD
+    );
+
+    // 즐겨찾기 버튼 클릭 핸들러
+    const handleFavoriteClick = () => {
+        if (isFavorite) {
+            removeFavoritesParkingData(parking.PKLT_CD); // 즐겨찾기 해제
+        } else {
+            addFavoritesParkingData(parking); // 즐겨찾기 추가
+        }
+    };
 
     return (
         <>
@@ -134,13 +154,17 @@ const Marker = ({
                                 top: "10px",
                                 cursor: "pointer",
                             }}
-                            onClick={() => setIsOpen(false)} // 닫기 버튼 클릭 시 오버레이 닫힘
+                            onClick={() => setIsOpen(false)} // 오버레이 닫힘
                         />
                         <div>
                             <h3>{parking.PKLT_NM}</h3>
-                            <FavoriteButton>
+                            <FavoriteButton onClick={handleFavoriteClick}>
                                 <img
-                                    src='/public/favorite-active.png'
+                                    src={
+                                        isFavorite
+                                            ? "/public/favorite-active.png"
+                                            : "/public/favorite-non-active.png"
+                                    }
                                     alt='즐겨찾기'
                                 />
                             </FavoriteButton>

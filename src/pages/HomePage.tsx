@@ -1,8 +1,9 @@
 import Header from "../components/layout/Header";
 import styled from "styled-components";
 import SearchBar from "../components/common/SearchBar";
-import { List } from "../components/features/sideNavigation";
+import { Favorites, List } from "../components/features/sideNavigation";
 import MapContainer from "./../components/features/map/MapContainer";
+import { useAppStore } from "./../stores/AppStore";
 
 // 전체 레이아웃 컨테이너 - PC와 모바일에서 다른 레이아웃 적용
 const LayoutContainer = styled.div`
@@ -23,13 +24,15 @@ const LeftContainer = styled.div`
 `;
 
 const HomePage = () => {
+    const { isListView, isFavoriteView } = useAppStore();
+
     return (
         <LayoutContainer>
             <LeftContainer>
                 <Header />
                 <SearchBar />
-                <List />
-                {/* <Favorites /> */}
+                {isListView && <List />}
+                {isFavoriteView && <Favorites />}
             </LeftContainer>
 
             <MapContainer />

@@ -1,14 +1,31 @@
 import { useAppStore } from "../stores/AppStore";
 import { getParkingData } from "../services/parkingService";
+import { ParkingData } from "./../stores/parkingDataTypes";
 
 export default function useMap() {
-    const { setCurrentLocation, setRegionInfo, setParkingData, setMapCenter } =
-        useAppStore();
+    const {
+        setCurrentLocation,
+        setRegionInfo,
+        setParkingData,
+        setMapCenter,
+        favoritesParkingData,
+    } = useAppStore();
 
     // 자치구 기준으로 API 데이터 가져오기
     const setParkingDataByRegion = async (regionInfo: string) => {
         const parkingData = await getParkingData(1, 100, regionInfo);
-        return parkingData;
+
+        // 즐겨찾기 상태 가져가기
+        const parkingDataWithFavorites = parkingData.map(
+            (parking: ParkingData) => ({
+                ...parking,
+                isFavorite: favoritesParkingData.some(
+                    (favorite) => favorite.PKLT_CD === parking.PKLT_CD
+                ), // 즐겨찾기 여부 추가
+            })
+        );
+
+        return parkingDataWithFavorites;
     };
 
     // 현재 위치 가져오기

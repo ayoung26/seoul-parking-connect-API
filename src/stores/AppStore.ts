@@ -4,51 +4,83 @@ import { ParkingData } from "./parkingDataTypes";
 type FilterKey = "paid" | "free" | "onStreet" | "offStreet" | "available";
 
 interface AppState {
-    isListOpen: boolean; // 리스트 열림/닫힘 상태
-    setIsListOpen: (open: boolean) => void; // 리스트 열림/닫힘 설정 함수
-    toggleList: () => void; // 리스트 노출 토글하는 함수
+    // 모바일 상태 관리
+    isListOpen: boolean;
+    setIsListOpen: (open: boolean) => void;
+    toggleListOpen: () => void;
 
-    activeFilters: Record<FilterKey, boolean>; // 필터 상태 (유료, 무료 등)
-    toggleFilter: (filter: FilterKey) => void; // 필터 토글 함수
+    isFavoriteOpen: boolean;
+    setIsFavoriteOpen: (open: boolean) => void;
+    toggleFavoriteOpen: () => void;
 
-    currentLocation: { lat: number; lng: number } | null; // 현재 위치 상태
-    setCurrentLocation: (location: { lat: number; lng: number }) => void; // 현재 위치 설정 함수
+    // 웹 상태 관리
+    isListView: boolean;
+    toggleListView: () => void;
 
-    mapCenter: { lat: number; lng: number } | null; // 지도중심지
-    setMapCenter: (location: { lat: number; lng: number }) => void; // 지도중심지 설정 함수
+    isFavoriteView: boolean;
+    setIsFavoriteView: (view: boolean) => void;
+    toggleFavoriteView: () => void;
 
-    mapLevel: number; // 지도 확대 레벨
-    setMapLevel: (level: number) => void; // 지도 확대 레벨 설정 함수
-    initialMapLevel: number; // 지도 확대 초기 레벨
-    markerZoomLevel: number; // 마커 클릭 시 레벨
+    // 공통 상태 관리
+    activeFilters: Record<FilterKey, boolean>;
+    toggleFilter: (filter: FilterKey) => void;
 
-    regionInfo: string | null; // 행정구역명
-    setRegionInfo: (info: string) => void; // 행정구역명 설정 함수
+    currentLocation: { lat: number; lng: number } | null;
+    setCurrentLocation: (location: { lat: number; lng: number }) => void;
 
-    parkingData: ParkingData[]; // 주차장 데이터 상태
-    setParkingData: (data: ParkingData[]) => void; // 주차장 데이터 설정 함수
+    mapCenter: { lat: number; lng: number } | null;
+    setMapCenter: (location: { lat: number; lng: number }) => void;
 
-    filteredParkingData: ParkingData[]; // 필터링된 주차장 데이터 상태
-    setFilteredParkingData: (data: ParkingData[]) => void; // 필터링된 주차장 데이터 설정 함수
+    mapLevel: number;
+    setMapLevel: (level: number) => void;
+    initialMapLevel: number;
+    markerZoomLevel: number;
+
+    regionInfo: string | null;
+    setRegionInfo: (info: string) => void;
+
+    parkingData: ParkingData[];
+    setParkingData: (data: ParkingData[]) => void;
+
+    filteredParkingData: ParkingData[];
+    setFilteredParkingData: (data: ParkingData[]) => void;
+
+    favoritesParkingData: ParkingData[];
+    addFavoritesParkingData: (parking: ParkingData) => void;
+    removeFavoritesParkingData: (parkingCode: string) => void;
+    clearFavoritesParkingData: () => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
-    // 리스트 상태
+    // 리스트 열림/닫힘 상태
     isListOpen: false,
-    // 리스트 상태 설정 함수
     setIsListOpen: (open: boolean) => set({ isListOpen: open }),
-    // 리스트 노출 토글 함수
-    toggleList: () => set((state) => ({ isListOpen: !state.isListOpen })),
+    toggleListOpen: () => set((state) => ({ isListOpen: !state.isListOpen })),
 
-    // 필터의 초기 상태
+    // 즐겨찾기 열림/닫힘 상태
+    isFavoriteOpen: false,
+    setIsFavoriteOpen: (open: boolean) => set({ isFavoriteOpen: open }),
+    toggleFavoriteOpen: () =>
+        set((state) => ({ isFavoriteOpen: !state.isFavoriteOpen })),
+
+    // 리스트 뷰 열림/닫힘 상태
+    isListView: true,
+    toggleListView: () => set((state) => ({ isListView: !state.isListView })),
+
+    // 즐겨찾기 뷰 열림/닫힘 상태
+    isFavoriteView: false,
+    setIsFavoriteView: (view: boolean) => set({ isFavoriteView: view }),
+    toggleFavoriteView: () =>
+        set((state) => ({ isFavoriteView: !state.isFavoriteView })),
+
+    // 필터 상태 및 토글 함수
     activeFilters: {
-        paid: false, // 유료
-        free: false, // 무료
-        onStreet: false, // 노상
-        offStreet: false, // 노외
-        available: false, // 현재주차가능
+        paid: false,
+        free: false,
+        onStreet: false,
+        offStreet: false,
+        available: false,
     },
-    // 필터 토글 함수
     toggleFilter: (filter: FilterKey) =>
         set((state) => ({
             activeFilters: {
@@ -57,39 +89,51 @@ export const useAppStore = create<AppState>((set) => ({
             },
         })),
 
-    // 현재 위치 상태
+    // 현재 위치 및 지도 중심 상태
     currentLocation: null,
-    // 현재 위치 설정 함수
     setCurrentLocation: (location: { lat: number; lng: number }) =>
         set({ currentLocation: location }),
 
-    // 지도중심지
     mapCenter: null,
-    // 지도중심지 설정 함수
     setMapCenter: (location: { lat: number; lng: number }) =>
         set({ mapCenter: location }),
 
-    // 지도 확대 레벨
+    // 지도 확대/축소 레벨 관리
     mapLevel: 5,
-    // 지도 확대 레벨 설정 함수
     setMapLevel: (level: number) => set({ mapLevel: level }),
-    // 지도 확대 초기 레벨
     initialMapLevel: 5,
-    // 마커 클릭 시 레벨
-    markerZoomLevel: 1,
+    markerZoomLevel: 3,
 
-    // 행정구역명
+    // 행정구역 정보
     regionInfo: null,
-    // 행정구역명 설정 함수
     setRegionInfo: (Info: string) => set({ regionInfo: Info }),
 
-    // 주차장 데이터 상태
+    // 주차장 데이터 관리
     parkingData: [],
-    // 주차장 데이터 설정 함수
     setParkingData: (data: ParkingData[]) => set({ parkingData: data }),
 
-    // 필터링된 주차장 데이터 상태
+    // 필터링된 주차장 데이터 관리
     filteredParkingData: [],
-    // 필터링된 주차장 데이터 설정 함수
     setFilteredParkingData: (data) => set({ filteredParkingData: data }),
+
+    // 즐겨찾기 주차장 데이터 관리
+    favoritesParkingData: JSON.parse(localStorage.getItem("favorites") || "[]"),
+    addFavoritesParkingData: (parking: ParkingData) =>
+        set((state) => {
+            const updatedFavorites = [...state.favoritesParkingData, parking];
+            localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+            return { favoritesParkingData: updatedFavorites };
+        }),
+    removeFavoritesParkingData: (parkingCode: string) =>
+        set((state) => {
+            const updatedFavorites = state.favoritesParkingData.filter(
+                (item) => item.PKLT_CD !== parkingCode
+            );
+            localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+            return { favoritesParkingData: updatedFavorites };
+        }),
+    clearFavoritesParkingData: () => {
+        localStorage.removeItem("favorites");
+        set({ favoritesParkingData: [] });
+    },
 }));

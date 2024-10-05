@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useAppStore } from "./../../stores/AppStore";
 
 const StyledFavoriteButton = styled.button`
     position: absolute;
@@ -16,10 +17,7 @@ const StyledFavoriteButton = styled.button`
     z-index: 10;
 
     @media (min-width: 1024px) {
-        width: 45px;
-        height: 45px;
-        top: 25px;
-        right: 25px;
+        display: none;
     }
 
     img {
@@ -33,8 +31,15 @@ const StyledFavoriteButton = styled.button`
 `;
 
 const FavoriteButton = () => {
+    const { setIsFavoriteOpen, setIsFavoriteView } = useAppStore();
+
+    const handleButton = () => {
+        setIsFavoriteOpen(true);
+        setIsFavoriteView(true);
+    };
+
     return (
-        <StyledFavoriteButton>
+        <StyledFavoriteButton onClick={handleButton}>
             <img src='/public/favorite-active.png' alt='즐겨찾기' />
         </StyledFavoriteButton>
     );

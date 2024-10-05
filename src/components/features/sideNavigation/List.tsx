@@ -137,7 +137,8 @@ const List = () => {
                     <Title>{parking.PKLT_NM}</Title>
                     <Description>
                         {parking.ADDR} / {parking.PRK_TYPE_NM} /{" "}
-                        {parking.PAY_YN_NM} / {parking.BSC_PRK_CRG}원
+                        {parking.PAY_YN_NM} /{" "}
+                        {parking.BSC_PRK_CRG.toLocaleString()}원
                     </Description>
                     <DetailLink href={"#"}>상세보기</DetailLink>
                 </ListItem>

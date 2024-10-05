@@ -4,11 +4,15 @@ import { useAppStore } from "../../../stores/AppStore";
 const ListContainer = styled.div<{ $isOpen: boolean }>`
     /* 상태에 따라 보이거나 숨김 */
     display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
+    z-index: 100;
     padding: 15px;
     overflow-y: auto;
+    height: calc(100vh - 108px);
 
     @media (min-width: 1024px) {
+        position: relative;
         display: block; /* 웹에서는 항상 노출 */
+        height: calc(100vh - 125px);
     }
 `;
 const ListHeader = styled.div`
@@ -31,24 +35,21 @@ const ClearButton = styled.button`
     text-align: right;
 
     &:hover {
-        color: red;
+        color: #f13c3c;
     }
 
     @media (min-width: 1024px) {
         font-size: 1rem;
     }
 `;
-const RemoveButton = styled.button`
-    color: #666;
-    font-size: 1rem;
+const RemoveButton = styled.img`
+    width: 10px;
+    height: 10px;
     cursor: pointer;
 
-    &:hover {
-        color: red;
-    }
-
     @media (min-width: 1024px) {
-        font-size: 1.5rem;
+        width: 10px;
+        height: 10px;
     }
 `;
 const ListItem = styled.div`
@@ -101,86 +102,80 @@ const DetailLink = styled.a`
         font-size: 0.9rem;
     }
 `;
-const Spinner = styled.div`
-    margin: 20px auto;
-    width: 30px;
-    height: 30px;
-    border: 5px solid lightgray;
-    border-top: 5px solid #4395f6;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+// const Spinner = styled.div`
+//     margin: 20px auto;
+//     width: 30px;
+//     height: 30px;
+//     border: 5px solid lightgray;
+//     border-top: 5px solid #4395f6;
+//     border-radius: 50%;
+//     animation: spin 1s linear infinite;
 
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-`;
+//     @keyframes spin {
+//         0% {
+//             transform: rotate(0deg);
+//         }
+//         100% {
+//             transform: rotate(360deg);
+//         }
+//     }
+// `;
+
 const Favorites = () => {
-    const isListOpen = useAppStore((state) => state.isListOpen);
+    const {
+        isFavoriteOpen,
+        favoritesParkingData,
+        removeFavoritesParkingData,
+        clearFavoritesParkingData,
+        setMapCenter,
+        setMapLevel,
+    } = useAppStore();
 
-    // 예시 데이터
-    const items = [
-        {
-            id: 1,
-            title: "효원빌딩주차장",
-            description: "서울 송파구 가락동 / 노상 / 기본요금 9000원",
-            link: "#",
-        },
-        {
-            id: 2,
-            title: "가락ID타워 주차장",
-            description: "서울 송파구 가락동 / 노상 / 무료 / 야간",
-            link: "#",
-        },
-        {
-            id: 3,
-            title: "효원빌딩주차장",
-            description: "서울 송파구 가락동 / 노상 / 기본요금 9000원",
-            link: "#",
-        },
-        {
-            id: 4,
-            title: "가락ID타워 주차장",
-            description: "서울 송파구 가락동 / 노상 / 무료 / 야간",
-            link: "#",
-        },
-    ];
+    // 주차장명 ㄱㄴㄷ 순으로 정렬
+    const sortParkingData = favoritesParkingData.sort((a, b) => {
+        return a.PKLT_NM.localeCompare(b.PKLT_NM);
+    });
 
-    const handleRemoveItem = (id: number) => {
-        // 아이템 삭제 로직 구현
-        console.log(id);
-    };
-
-    const handleClearList = () => {
-        // 즐겨찾기 비우기 로직 구현
+    // 리스트 항목 클릭 시 지도 포커싱
+    const handleListClick = (lat: number, lng: number) => {
+        setMapCenter({ lat, lng });
+        const markerZoomLevel = useAppStore.getState().markerZoomLevel;
+        setMapLevel(markerZoomLevel);
     };
 
     return (
-        <ListContainer as='section' $isOpen={isListOpen}>
+        <ListContainer as='section' $isOpen={isFavoriteOpen}>
             <ListHeader>
                 즐겨찾기
-                <ClearButton onClick={handleClearList}>비우기</ClearButton>
+                <ClearButton onClick={clearFavoritesParkingData}>
+                    비우기
+                </ClearButton>
             </ListHeader>
 
-            {items.map((item) => (
-                <ListItem key={item.id}>
+            {sortParkingData.map((parking) => (
+                <ListItem
+                    key={parking.PKLT_CD}
+                    onClick={() => handleListClick(parking.LAT, parking.LOT)}
+                >
                     <ListItemContent>
-                        <Title>{item.title}</Title>
-                        <Description>{item.description}</Description>
-                        <DetailLink href={item.link}>상세보기</DetailLink>
+                        <Title>{parking.PKLT_NM}</Title>
+                        <Description>
+                            {parking.ADDR} / {parking.PRK_TYPE_NM} /{" "}
+                            {parking.PAY_YN_NM} /{" "}
+                            {parking.BSC_PRK_CRG.toLocaleString()}원
+                        </Description>
+                        <DetailLink href={""}>상세보기</DetailLink>
                     </ListItemContent>
-                    <RemoveButton onClick={() => handleRemoveItem(item.id)}>
-                        ×
-                    </RemoveButton>
+                    <RemoveButton
+                        src='/public/closeIcon.png'
+                        onClick={() =>
+                            removeFavoritesParkingData(parking.PKLT_CD)
+                        }
+                    />
                 </ListItem>
             ))}
 
             {/* {isLoading && <Spinner />} */}
-            <Spinner />
         </ListContainer>
     );
 };
