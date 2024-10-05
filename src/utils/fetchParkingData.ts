@@ -7,7 +7,10 @@ export const fetchParkingData = async (
         // (선택) 자치구명 검색
         const addrParam = addr ? `/${encodeURIComponent(addr)}` : "";
 
-        const apiUrl = import.meta.env.VITE_API_BASE_URL;
+        const apiUrl =
+            process.env.NODE_ENV === "development"
+                ? import.meta.env.VITE_API_BASE_URL // 로컬 환경
+                : "/api"; // Vercel 환경에서는 프록시된 /api 경로 사용
         const apiKey = import.meta.env.VITE_API_KEY;
 
         if (!apiUrl || !apiKey) {
