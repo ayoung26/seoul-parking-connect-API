@@ -1,6 +1,19 @@
 import styled from "styled-components";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAppStore } from "../../../stores/AppStore";
+import SearchBar from "../../common/SearchBar";
+
+const FavoritesContainer = styled.div`
+    position: relative;
+    z-index: 100;
+    background-color: #fff;
+    margin-top: -50px;
+
+    @media (min-width: 1024px) {
+        margin-top: 0;
+    }
+`;
 
 const ListContainer = styled.div<{ $isOpen: boolean }>`
     /* 상태에 따라 보이거나 숨김 */
@@ -117,6 +130,19 @@ const DetailLink = styled.span`
         font-size: 0.9rem;
     }
 `;
+
+const NoListMessage = styled.p`
+    text-align: center;
+    font-size: 0.9rem;
+    color: #999;
+    margin-top: 20px;
+
+    @media (min-width: 1024px) {
+        font-size: 1rem;
+        margin-top: 30px;
+    }
+`;
+
 // const Spinner = styled.div`
 //     margin: 20px auto;
 //     width: 30px;
@@ -146,8 +172,26 @@ const Favorites = () => {
         setMapLevel,
     } = useAppStore();
 
+    // 검색 결과 상태 관리
+    const [filteredFavorites, setFilteredFavorites] =
+        useState(favoritesParkingData);
+
+    // 검색 필터링 처리
+    const handleSearch = (searchTerm: string) => {
+        if (!searchTerm) {
+            setFilteredFavorites(favoritesParkingData);
+        } else {
+            const filteredData = favoritesParkingData.filter(
+                (parking) =>
+                    parking.PKLT_NM.includes(searchTerm) ||
+                    parking.ADDR.includes(searchTerm)
+            );
+            setFilteredFavorites(filteredData);
+        }
+    };
+
     // 주차장명 ㄱㄴㄷ 순으로 정렬
-    const sortParkingData = favoritesParkingData.sort((a, b) => {
+    const sortParkingData = filteredFavorites.sort((a, b) => {
         return a.PKLT_NM.localeCompare(b.PKLT_NM);
     });
 
@@ -159,41 +203,53 @@ const Favorites = () => {
     };
 
     return (
-        <ListContainer as='section' $isOpen={isFavoriteOpen}>
-            <ListHeader>
-                즐겨찾기
-                <ClearButton onClick={clearFavoritesParkingData}>
-                    비우기
-                </ClearButton>
-            </ListHeader>
+        <FavoritesContainer>
+            <SearchBar context='favorites' onSearch={handleSearch} />
+            <ListContainer as='section' $isOpen={isFavoriteOpen}>
+                <ListHeader>
+                    즐겨찾기
+                    <ClearButton onClick={clearFavoritesParkingData}>
+                        비우기
+                    </ClearButton>
+                </ListHeader>
 
-            {sortParkingData.map((parking) => (
-                <ListItem
-                    key={parking.PKLT_CD}
-                    onClick={() => handleListClick(parking.LAT, parking.LOT)}
-                >
-                    <ListItemContent>
-                        <Title>{parking.PKLT_NM}</Title>
-                        <Description>
-                            {parking.ADDR} / {parking.PRK_TYPE_NM} /{" "}
-                            {parking.PAY_YN_NM} /{" "}
-                            {parking.BSC_PRK_CRG.toLocaleString()}원
-                        </Description>
-                        <Link to={`/detail/${parking.PKLT_CD}`}>
-                            <DetailLink>상세보기</DetailLink>
-                        </Link>
-                    </ListItemContent>
-                    <RemoveButton
-                        src='/closeIcon.png'
-                        onClick={() =>
-                            removeFavoritesParkingData(parking.PKLT_CD)
-                        }
-                    />
-                </ListItem>
-            ))}
-
-            {/* {isLoading && <Spinner />} */}
-        </ListContainer>
+                {/* 즐겨찾기 데이터가 없는 경우 */}
+                {favoritesParkingData.length === 0 ? (
+                    <NoListMessage>즐겨찾기가 없습니다.</NoListMessage>
+                ) : /* 즐겨찾기 데이터는 있지만, 검색 결과가 없는 경우 */
+                sortParkingData.length === 0 ? (
+                    <NoListMessage>검색 결과가 없습니다.</NoListMessage>
+                ) : (
+                    sortParkingData.map((parking) => (
+                        <ListItem
+                            key={parking.PKLT_CD}
+                            onClick={() =>
+                                handleListClick(parking.LAT, parking.LOT)
+                            }
+                        >
+                            <ListItemContent>
+                                <Title>{parking.PKLT_NM}</Title>
+                                <Description>
+                                    {parking.ADDR} / {parking.PRK_TYPE_NM} /{" "}
+                                    {parking.PAY_YN_NM} /{" "}
+                                    {parking.BSC_PRK_CRG.toLocaleString()}원
+                                </Description>
+                                <Link to={`/detail/${parking.PKLT_CD}`}>
+                                    <DetailLink>상세보기</DetailLink>
+                                </Link>
+                            </ListItemContent>
+                            <RemoveButton
+                                src='/closeIcon.png'
+                                onClick={() =>
+                                    removeFavoritesParkingData(parking.PKLT_CD)
+                                }
+                            />
+                        </ListItem>
+                    ))
+                )}
+                {/* {isLoading && <Spinner />} */}
+            </ListContainer>
+        </FavoritesContainer>
     );
 };
 

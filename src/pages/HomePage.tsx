@@ -1,6 +1,5 @@
 import Header from "../components/layout/Header";
 import styled from "styled-components";
-import SearchBar from "../components/common/SearchBar";
 import { Favorites, List } from "../components/features/sideNavigation";
 import MapContainer from "./../components/features/map/MapContainer";
 import { useAppStore } from "./../stores/AppStore";
@@ -30,7 +29,6 @@ const HomePage = () => {
         <LayoutContainer>
             <LeftContainer>
                 <Header />
-                <SearchBar />
                 {isListView && <List />}
                 {isFavoriteView && <Favorites />}
             </LeftContainer>

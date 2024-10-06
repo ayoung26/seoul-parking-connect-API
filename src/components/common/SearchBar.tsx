@@ -56,7 +56,13 @@ const ErrorMessage = styled.p`
     }
 `;
 
-const SearchBar = () => {
+const SearchBar = ({
+    context,
+    onSearch,
+}: {
+    context: "list" | "favorites";
+    onSearch?: (searchTerm: string) => void;
+}) => {
     const [searchTerm, setSearchTerm] = useState(""); // 검색어
     const [errorMessage, setErrorMessage] = useState(""); // 에러메세지
     const { setParkingDataByRegion, setMapCenterRegion } = useMap();
@@ -68,25 +74,37 @@ const SearchBar = () => {
         return regions.includes(searchTerm);
     };
 
-    // 검색 처리 (API 데이터 가져와서 리스트 반환 & 중심구로 지도 이동)
+    // 검색 처리 (리스트 반환 & 중심구로 지도 이동)
     const handleKeyDownSearch = async (
         e: React.KeyboardEvent<HTMLInputElement>
     ) => {
         if (e.key === "Enter") {
             if (validateSearchTerm()) {
+                // 에러메세지 초기화
                 setErrorMessage("");
-
-                // 지도 정보
-                setMapCenterRegion(searchTerm);
-                setRegionInfo(searchTerm);
 
                 // 지도 확대 초기화
                 const initialMapLevel = useAppStore.getState().initialMapLevel;
                 setMapLevel(initialMapLevel);
 
-                // 주차장 정보
-                const parkingData = await setParkingDataByRegion(searchTerm);
-                setParkingData(parkingData);
+                if (context === "list") {
+                    // 지도 정보
+                    setMapCenterRegion(searchTerm);
+                    setRegionInfo(searchTerm);
+                    // 주차장 정보
+                    const parkingData = await setParkingDataByRegion(
+                        searchTerm
+                    );
+                    setParkingData(parkingData);
+                } else if (context === "favorites") {
+                    // 검색 결과 즐겨찾기 컴포넌트 전달
+                    if (onSearch) {
+                        onSearch(searchTerm);
+                    }
+                }
+
+                // 검색어 초기화
+                setSearchTerm("");
 
                 // 모바일전용 : 리스트 오픈
                 setIsListOpen(true);
@@ -101,7 +119,11 @@ const SearchBar = () => {
             <SearchContainer>
                 <SearchIcon src='/searchIcon.png' alt='Search Icon' />
                 <SearchInput
-                    placeholder='자치구를 입력해주세요 (예) 강남구, 도봉구'
+                    placeholder={
+                        context === "list"
+                            ? "검색할 자치구 입력 (예 : 강남구, 마포구)"
+                            : "즐겨찾기 검색할 자치구 입력"
+                    }
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyDown={handleKeyDownSearch}

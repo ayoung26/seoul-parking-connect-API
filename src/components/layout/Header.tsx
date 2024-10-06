@@ -120,6 +120,7 @@ const Header = () => {
             setIsListOpen(false);
         } else if (isFavoriteOpen) {
             setIsFavoriteOpen(false);
+            toggleFavoriteView(); // 모바일 처리용
         }
     };
 

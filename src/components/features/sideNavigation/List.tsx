@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useAppStore } from "../../../stores/AppStore";
+import SearchBar from "../../common/SearchBar";
 
 const ListContainer = styled.div<{ $isListOpen: boolean }>`
     display: ${({ $isListOpen }) => ($isListOpen ? "block" : "none")};
@@ -93,6 +94,17 @@ const DetailLink = styled.span`
         font-size: 0.9rem;
     }
 `;
+const NoListMessage = styled.p`
+    text-align: center;
+    font-size: 0.9rem;
+    color: #999;
+    margin-top: 20px;
+
+    @media (min-width: 1024px) {
+        font-size: 1rem;
+        margin-top: 30px;
+    }
+`;
 // const Spinner = styled.div`
 //     margin: 20px auto;
 //     width: 30px;
@@ -141,28 +153,38 @@ const List = () => {
     };
 
     return (
-        <ListContainer as='section' $isListOpen={isListOpen}>
-            <ListHeader>{regionInfo} 근처 주차장이에요.</ListHeader>
+        <>
+            <SearchBar context='list' />
+            <ListContainer as='section' $isListOpen={isListOpen}>
+                <ListHeader>{regionInfo} 근처 주차장이에요.</ListHeader>
 
-            {sortParkingData.map((parking, idx) => (
-                <ListItem
-                    key={idx}
-                    onClick={() => handleListClick(parking.LAT, parking.LOT)}
-                >
-                    <Title>{parking.PKLT_NM}</Title>
-                    <Description>
-                        {parking.ADDR} / {parking.PRK_TYPE_NM} /{" "}
-                        {parking.PAY_YN_NM} /{" "}
-                        {parking.BSC_PRK_CRG.toLocaleString()}원
-                    </Description>
-                    <Link to={`/detail/${parking.PKLT_CD}`}>
-                        <DetailLink>상세보기</DetailLink>
-                    </Link>
-                </ListItem>
-            ))}
+                {/* 주차장 데이터가 없는 경우 */}
+                {sortParkingData.length === 0 ? (
+                    <NoListMessage>주차장 정보가 없습니다.</NoListMessage>
+                ) : (
+                    sortParkingData.map((parking, idx) => (
+                        <ListItem
+                            key={idx}
+                            onClick={() =>
+                                handleListClick(parking.LAT, parking.LOT)
+                            }
+                        >
+                            <Title>{parking.PKLT_NM}</Title>
+                            <Description>
+                                {parking.ADDR} / {parking.PRK_TYPE_NM} /{" "}
+                                {parking.PAY_YN_NM} /{" "}
+                                {parking.BSC_PRK_CRG.toLocaleString()}원
+                            </Description>
+                            <Link to={`/detail/${parking.PKLT_CD}`}>
+                                <DetailLink>상세보기</DetailLink>
+                            </Link>
+                        </ListItem>
+                    ))
+                )}
 
-            {/* {isLoading && <Spinner />} */}
-        </ListContainer>
+                {/* {isLoading && <Spinner />} */}
+            </ListContainer>
+        </>
     );
 };
 
