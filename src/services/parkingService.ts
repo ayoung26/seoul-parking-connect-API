@@ -9,6 +9,12 @@ export const getParkingData = async (
 ) => {
     try {
         const data = await fetchParkingData(startIdx, endIdx, addr);
+
+        if (data.RESULT && data.RESULT.CODE === "INFO-200") {
+            console.error(data.RESULT.MESSAGE);
+            return [];
+        }
+
         const rowData = data ? data.GetParkingInfo.row : null;
 
         return rowData;
