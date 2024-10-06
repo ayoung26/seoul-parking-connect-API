@@ -15,6 +15,20 @@ const ListContainer = styled.div<{ $isOpen: boolean }>`
         display: block; /* 웹에서는 항상 노출 */
         height: calc(100vh - 125px);
     }
+
+    /* 스크롤바 디자인 */
+    &::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #d5d5d5;
+        border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: #f1f1f1;
+    }
 `;
 const ListHeader = styled.div`
     display: flex;

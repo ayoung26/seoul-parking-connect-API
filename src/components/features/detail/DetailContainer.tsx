@@ -7,6 +7,7 @@ const InfoContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    overflow-y: auto;
 
     @media (min-width: 1024px) {
         max-width: 900px;

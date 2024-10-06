@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useAppStore } from "../../stores/AppStore";
 
 const HeaderContainer = styled.header`
@@ -82,6 +82,8 @@ const Header = () => {
         toggleFavoriteView,
     } = useAppStore();
 
+    const navigate = useNavigate();
+
     // 모바일 환경 감지
     const [isMobile, setIsMobile] = useState(false);
     useEffect(() => {
@@ -111,14 +113,20 @@ const Header = () => {
 
     // 지도 아이콘 클릭 시 처리
     const handleMapIconClick = () => {
-        setIsListOpen(false);
-        setIsFavoriteOpen(false);
+        if (location.pathname.includes("/detail")) {
+            navigate("/");
+            navigate("/", { state: { fromDetail: true } });
+        } else if (isListOpen) {
+            setIsListOpen(false);
+        } else if (isFavoriteOpen) {
+            setIsFavoriteOpen(false);
+        }
     };
 
     // 지도 아이콘 노출
     const showMapIcon =
-        (isMobile || location.pathname.includes("/detail")) &&
-        (isListOpen || isFavoriteOpen);
+        location.pathname.includes("/detail") || // 상세페이지
+        (isMobile && (isListOpen || isFavoriteOpen)); // 모바일환경에서 리스트나 즐겨찾기 오픈한 경우
 
     return (
         <HeaderContainer>
