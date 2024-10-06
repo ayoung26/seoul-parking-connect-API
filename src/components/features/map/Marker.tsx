@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { CustomOverlayMap, MapMarker } from "react-kakao-maps-sdk";
+import { CustomOverlayMap, MapMarker, useMap } from "react-kakao-maps-sdk";
 import styled from "styled-components";
 import { ParkingData } from "../../../stores/parkingDataTypes";
 import { useAppStore } from "../../../stores/AppStore";
@@ -19,6 +18,7 @@ const StyledOverlay = styled.div`
     flex-direction: column;
     gap: 0.8rem;
     position: relative;
+    cursor: auto;
 
     @media (min-width: 1024px) {
         width: 300px;
@@ -100,11 +100,16 @@ const FavoriteButton = styled.button`
 const Marker = ({
     position,
     parking,
+    isOpen,
+    setOpenMarkerId,
 }: {
     position: { lat: number; lng: number };
     parking: ParkingData;
+    isOpen: boolean;
+    setOpenMarkerId: (id: string | null) => void;
 }) => {
-    const [isOpen, setIsOpen] = useState(false); // 오버레이 열림/닫힘 상태
+    const map = useMap(); // 지도객체 가져오기
+
     const {
         favoritesParkingData,
         addFavoritesParkingData,
@@ -125,15 +130,25 @@ const Marker = ({
         }
     };
 
+    // 오버레이 클릭 핸들러
+    const handleOverlayClick = (event: React.MouseEvent) => {
+        event.stopPropagation(); // 오버레이 내부 클릭 시 닫힘 방지
+    };
+
+    // 마커 클릭 핸들러
+    const handleMarkerClick = (marker: kakao.maps.Marker) => {
+        setOpenMarkerId(isOpen ? null : `${parking.LAT}-${parking.LOT}`); // 오버레이 제어
+        map.panTo(marker.getPosition()); // 마커 위치로 지도 이동
+    };
+
     return (
         <>
             <MapMarker
                 position={position}
-                clickable={true} // 클릭 가능 여부
-                onClick={() => setIsOpen(!isOpen)} // 클릭 시 상태 변경
+                clickable={true}
+                onClick={handleMarkerClick}
                 image={{
                     src: "/markerIcon.png", // 마커 아이콘
-
                     size: { width: 30, height: 38 },
                 }}
             />
@@ -144,21 +159,9 @@ const Marker = ({
                     xAnchor={0.5}
                     yAnchor={1.25}
                 >
-                    <StyledOverlay>
-                        <img
-                            alt='close'
-                            width='10'
-                            height='10'
-                            src='/closeIcon.png'
-                            style={{
-                                position: "absolute",
-                                right: "10px",
-                                top: "10px",
-                                cursor: "pointer",
-                            }}
-                            onClick={() => setIsOpen(false)} // 오버레이 닫힘
-                        />
-                        <div>
+                    {/* 오버레이 클릭 시 닫힘 */}
+                    <StyledOverlay onClick={() => setOpenMarkerId(null)}>
+                        <div onClick={handleOverlayClick}>
                             <h3>{parking.PKLT_NM}</h3>
                             <FavoriteButton onClick={handleFavoriteClick}>
                                 <img

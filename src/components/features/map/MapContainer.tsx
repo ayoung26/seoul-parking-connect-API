@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Map } from "react-kakao-maps-sdk";
 import FilterButtons from "../../common/FilterButtons";
@@ -6,7 +7,6 @@ import CurrentMoveButton from "../../common/CurrentMoveButton";
 import FavoriteButton from "../../common/FavoriteButton";
 import { useAppStore } from "../../../stores/AppStore";
 import useMap from "../../../hooks/useMap";
-import { useEffect } from "react";
 import Marker from "./Marker";
 
 const StyledMapContainer = styled.div`
@@ -68,6 +68,9 @@ const MapContainer = () => {
         setMapCenter({ lat: latlng.getLat(), lng: latlng.getLng() });
     };
 
+    // 오버레이 오픈한 마커
+    const [openMarkerId, setOpenMarkerId] = useState<string | null>(null);
+
     return (
         <StyledMapContainer>
             <FilterButtons />
@@ -83,6 +86,10 @@ const MapContainer = () => {
                         key={idx}
                         position={{ lat: parking.LAT, lng: parking.LOT }}
                         parking={parking}
+                        isOpen={
+                            openMarkerId === `${parking.LAT}-${parking.LOT}`
+                        } // 현재 열려 있는 마커인지 확인
+                        setOpenMarkerId={setOpenMarkerId} // 오버레이 열림 상태 관리 함수
                     ></Marker>
                 ))}
             </Map>
