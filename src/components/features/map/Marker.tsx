@@ -175,7 +175,10 @@ const Marker = ({
                             </FavoriteButton>
                         </div>
                         <p>{parking.ADDR}</p>
-                        <p>현재 주차 가능 {parking.NOW_PRK_VHCL_CNT}대</p>
+                        <p>
+                            현재 주차 가능{" "}
+                            {parking.TPKCT - parking.NOW_PRK_VHCL_CNT}대
+                        </p>
                         <p>
                             {parking.PRK_TYPE_NM} / 기본요금{" "}
                             {parking.BSC_PRK_CRG.toLocaleString()}원

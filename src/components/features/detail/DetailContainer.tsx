@@ -11,7 +11,6 @@ const InfoContainer = styled.div`
 
     @media (min-width: 1024px) {
         max-width: 900px;
-        gap: 1.5rem;
     }
 `;
 const InfoTitle = styled.div`
@@ -194,6 +193,13 @@ const DetailContainer = ({ parking }: { parking: ParkingData }) => {
 
             {/* 주차장 상세 정보 */}
             <InfoSection>
+                <InfoRow>
+                    <InfoLabel>
+                        현재 주차 가능{" "}
+                        {parking.TPKCT - parking.NOW_PRK_VHCL_CNT}대 / 전체
+                        주차공간 {parking.TPKCT}대
+                    </InfoLabel>
+                </InfoRow>
                 <InfoRow>
                     <InfoLabel>종류</InfoLabel>
                     <InfoValue>{parking.PRK_TYPE_NM}</InfoValue>
